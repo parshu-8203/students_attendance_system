@@ -6,7 +6,7 @@ const transporter = nodemailer.createTransport({
   service: "gmail",
   host: "smtp.gmail.com",
   port: 587,
-  secure: false,
+  secure: true,
   auth: {
     user: process.env.GMAIL_USERNAME,
     pass: process.env.GMAIL_PASS,
@@ -33,5 +33,8 @@ const generateResetToken = () => {
   const token = crypto.randomBytes(20).toString('hex');
   return token;
 };
+const generateRandomString = () => {
+  return Math.random().toString(36).substr(2, 8);
+}
 
-module.exports = { sendResetLinkEmail, generateResetToken };
+module.exports = { sendResetLinkEmail, generateResetToken , generateRandomString};

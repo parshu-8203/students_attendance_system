@@ -7,6 +7,8 @@ const studentSchema = new Schema({
   mobileNumber: { type: String, required: true },
   password: { type: String, required: true },
   rollNumber: { type: String, required: true, unique: true },
+  resetToken: { type: String },
+  resetTokenExpiration: { type: Date },
 });
 
 const Student = mongoose.model('Student', studentSchema);

@@ -8,6 +8,7 @@ const adminSchema = new Schema({
   password: { type: String, required: true },
   resetToken: { type: String },
   resetTokenExpiration: { type: Date },
+  count: { type: Number, required: true }
 });
 
 const Admin = mongoose.model('Admin', adminSchema);

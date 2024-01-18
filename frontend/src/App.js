@@ -1,13 +1,23 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PrivateRoute from './services/privateRoute';
 import AuthService from './services/authService';
 import AdminLogin from './components/AdminPanel/AdminLogin';
 import Admin from './components/AdminPanel';
+import AddStudent from './components/AdminPanel/AddStudent';
 import ForgotPassword from './components/AdminPanel/ForgotPassword';
+import Navbar from './components/AdminPanel/AdminNavbar';
+import GenerateQRCode from './components/QRPanel';
 const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(AuthService.isAuthenticated());
+
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+  };
+
   return (
     <Router>
+      {isAuthenticated && <Navbar />}
       <Routes>
         <Route
           path="/"
@@ -15,13 +25,21 @@ const App = () => {
             AuthService.isAuthenticated() ? (
               <Navigate to="/admin" />
             ) : (
-              <AdminLogin />
+              <AdminLogin onLogin={handleLogin} />
             )
           }
         />
         <Route
           path="/admin"
           element={<PrivateRoute element={<Admin />} />}
+        />
+        <Route
+          path="/addStudent"
+          element={<PrivateRoute element={<AddStudent />} />}
+        />
+         <Route
+          path="/generateQR"
+          element={<PrivateRoute element={<GenerateQRCode />} />}
         />
         <Route path="/forgot-password/:token" element={<ForgotPassword />} />
       </Routes>

@@ -1,0 +1,18 @@
+.qrcode-container 
+{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.qrcode-container button {
+    margin-top: 10px;
+}
+.qrcode-container .empty-box{
+    width: 250px;
+    height: 250px;
+    border : 1px solid black;
+    padding: 20px;
+}

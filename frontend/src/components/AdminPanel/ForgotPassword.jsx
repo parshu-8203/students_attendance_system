@@ -9,6 +9,7 @@ const ForgotPassword = () => {
     const [repeatNewPassword, setRepeatNewPassword] = useState('');
     const [isTokenValid, setIsTokenValid] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [status, setStatus] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -37,8 +38,9 @@ const ForgotPassword = () => {
             toast.success('Password reset successfully', {
                 duration: 2000
             });
+
             setTimeout(() => {
-                navigate('/');
+                setStatus(true);
             }, 1000);
         } catch (error) {
             toast.success(error.message, {
@@ -56,25 +58,33 @@ const ForgotPassword = () => {
     }
 
     return (
-        <form onSubmit={handleChangePassword}>
-            <div class="forgotPasswordContainer">
-                <p>Enter your new password:</p>
-                <input
-                    type="password"
-                    value={newPassword}
-                    required
-                    onChange={(e) => setNewPassword(e.target.value)}
-                />
-                <p>Repeat your new password:</p>
-                <input
-                    type="password"
-                    value={repeatNewPassword}
-                    required
-                    onChange={(e) => setRepeatNewPassword(e.target.value)}
-                />
-                <button type="submit">Submit</button>
-            </div>
-        </form>
+        <>
+            {!status ? (
+                <form onSubmit={handleChangePassword}>
+                    <div class="forgotPasswordContainer">
+                        <p>Enter your new password:</p>
+                        <input
+                            type="password"
+                            value={newPassword}
+                            required
+                            onChange={(e) => setNewPassword(e.target.value)}
+                        />
+                        <p>Repeat your new password:</p>
+                        <input
+                            type="password"
+                            value={repeatNewPassword}
+                            required
+                            onChange={(e) => setRepeatNewPassword(e.target.value)}
+                        />
+                        <button type="submit">Submit</button>
+                    </div>
+                </form>
+
+            ) : (
+                <h3>Successfully Changed Password, Please Login with new Password</h3>
+            )
+            }
+        </>
     );
 };
 
