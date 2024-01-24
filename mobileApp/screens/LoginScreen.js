@@ -4,8 +4,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ToastAndroi
 import Modal from 'react-native-modal';
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const LoginScreen = () => {
-    // const navigation = useNavigation();
+const LoginScreen = ({onLoginSuccess}) => {
     const [data, setData] = useState({
         email: '',
         password: '',
@@ -36,7 +35,7 @@ const LoginScreen = () => {
             }
             const {message, token} = await studentLogin(data);
             await setToken(token);
-            // navigation.navigate('Dashboard', {name : "dashboard"});
+            onLoginSuccess();
             console.log(message);
         } catch (error) {
             ToastAndroid.show(error.message, ToastAndroid.SHORT);

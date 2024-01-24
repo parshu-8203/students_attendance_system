@@ -8,7 +8,9 @@ const adminSchema = new Schema({
   password: { type: String, required: true },
   resetToken: { type: String },
   resetTokenExpiration: { type: Date },
-  count: { type: Number, required: true }
+  count: { type: Number, required: true },
+  sessionToken: { type: String },
+  qrCode : {type:String},
 });
 
 const Admin = mongoose.model('Admin', adminSchema);

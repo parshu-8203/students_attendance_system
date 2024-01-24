@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 module.exports.authenticate = (req, res, next) => {
-    const token = req.headers.authorization; // Assuming the token is sent in the Authorization header
+    // console.log("in authentication",req.headers);
+    const token = req.headers.authorization; 
 
     if (!token) {
         return res.status(401).json({ message: 'Unauthorized - Missing token' });

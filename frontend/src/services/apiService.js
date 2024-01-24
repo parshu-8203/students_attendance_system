@@ -75,9 +75,14 @@ export const addStudent = async (data) => {
     }
 }
 
-export const generateQR = async () => {
+export const generateQR = async (token) => {
     try {
-        const response = await api.get('/admin/generate-qrcode');
+        // const response = await api.get('/admin/generate-qrcode');
+        const response = await api.get('/admin/generate-qrcode', {
+            headers: {
+                Authorization: token
+            }
+        });
         return response.data;
     }
     catch (err) {
@@ -112,9 +117,64 @@ export const getStudentByDate = async (date) => {
         const response = await api.post('/admin/attendance/search-by-date', { date });
         console.log(response.data);
         return response.data;
+
     }
     catch (err) {
         throw err.response ? err.response.data : err.message;
     }
 }
+export const setAttendanceStatus = async (id, status) => {
+    try {
+        const response = await api.put(
+            '/admin/set-attendance-status/',
+            { id, status },
+        );
+        return response.data;
+    } catch (err) {
+        throw err.response ? err.response.data : err.message;
+    }
+};
 
+export const fetchRollNumber = async (rollNumber) => {
+    try {
+        console.log("Fetch Rol", rollNumber)
+        const response = await api.post('/admin/fetch-student', { rollNumber });
+        return response.data;
+    }
+    catch (err) {
+        throw err.message ? err.response.data : err.message;
+    }
+}
+
+export const updateStudent = async (formData) => {
+    try {
+        const response = await api.put('/admin/update-student', formData);
+        return response;
+    }
+    catch (err) {
+        throw err.message ? err.response.data : err.message;
+    }
+}
+export const deleteStudent = async (formData) => {
+    try {
+        const { rollNumber } = formData;
+        const response = await api.delete(`/admin/delete-student/${rollNumber}`);
+        return response.data;
+    } catch (err) {
+        throw err.message ? err.response.data : err.message;
+    }
+};
+
+export const fetchAdmin = async(token) => {
+    try {
+        const response = await api.get('/admin/fetch-details', {
+            headers: {
+                Authorization: token
+            }
+        });
+        return response.data;
+    }
+    catch(err) {
+        throw err.message ? err.response.data : err.message;
+    }
+}

@@ -8,11 +8,19 @@ import AddStudent from './components/AdminPanel/AddStudent';
 import ForgotPassword from './components/AdminPanel/ForgotPassword';
 import Navbar from './components/AdminPanel/AdminNavbar';
 import GenerateQRCode from './components/QRPanel';
+import EditStudentScreen from './components/AdminPanel/EditStudent';
+import DeleteStudentScreen from './components/AdminPanel/DeleteStudent';
+import ProfileScreen from './components/AdminPanel/ProfileScreen';
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(AuthService.isAuthenticated());
 
   const handleLogin = () => {
     setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('Token');
+    setIsAuthenticated(false);
   };
 
   return (
@@ -37,9 +45,21 @@ const App = () => {
           path="/addStudent"
           element={<PrivateRoute element={<AddStudent />} />}
         />
-         <Route
+        <Route
+          path="/editStudent"
+          element={<PrivateRoute element={<EditStudentScreen />} />}
+        />
+        <Route
+          path="/deleteStudent"
+          element={<PrivateRoute element={<DeleteStudentScreen />} />}
+        />
+        <Route
           path="/generateQR"
           element={<PrivateRoute element={<GenerateQRCode />} />}
+        />
+        <Route
+          path="/profile"
+          element={<PrivateRoute element={<ProfileScreen onLogout={handleLogout} />} />}
         />
         <Route path="/forgot-password/:token" element={<ForgotPassword />} />
       </Routes>

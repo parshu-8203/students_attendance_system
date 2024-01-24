@@ -7,7 +7,7 @@ import DashboardScreen from '../screens/DashboardScreen';
 import TakePhotoScreen from '../screens/TakePhotoScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Icon from 'react-native-vector-icons/FontAwesome'; // You can change this to the icon library you prefer
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -29,6 +29,14 @@ const Navigation = () => {
   useEffect(() => {
     checkLoginStatus();
   }, []);
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  }
 
   return (
     <NavigationContainer>
@@ -62,17 +70,21 @@ const Navigation = () => {
           />
           <Tab.Screen
             name="Profile"
-            component={ProfileScreen}
             options={{
               tabBarIcon: ({ color, size }) => (
                 <Icon name="user" color={color} size={size} />
               ),
             }}
-          />
+          >
+            {(props) => <ProfileScreen {...props} onLogout={handleLogout} />}
+          </Tab.Screen>
         </Tab.Navigator>
+
       ) : (
         <Stack.Navigator initialRouteName={'login'} screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="login" component={LoginScreen} />
+          <Stack.Screen name="login">
+            {(props) => <LoginScreen {...props} onLoginSuccess={handleLoginSuccess} />}
+          </Stack.Screen>
         </Stack.Navigator>
       )}
     </NavigationContainer>

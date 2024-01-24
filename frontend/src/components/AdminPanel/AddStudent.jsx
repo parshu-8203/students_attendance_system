@@ -43,7 +43,7 @@ const AddStudent = () => {
     };
 
     return (
-        <div className="add-student-container">
+        <div className="student-container">
             <img src={studentIcon} />
             <h2 style={{ margin: 0 }}>Add Student</h2>
             <form className="form" onSubmit={handleSubmit}>

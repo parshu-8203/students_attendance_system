@@ -4,10 +4,25 @@ const Admin = require('../models/Admin');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const QRcode = require('qrcode');
+const fs = require('fs');
+const jsQR = require('jsqr');
+
 const { sendResetLinkEmail, generateResetToken, generateRandomString } = require('../utils/utils');
 const jwtMiddleware = require('../middleware/auth.js');
 const Attendance = require('../models/Attendance.js');
+function extractDataFromQRCodeImage(filePath) {
+    // Read the image file
+    const imageBuffer = fs.readFileSync(filePath);
 
+    // Use jsQR to decode the QR code
+    const code = jsQR(imageBuffer, imageBuffer.length);
+
+    if (code) {
+        return code.data;
+    } else {
+        throw new Error('QR code decoding failed.');
+    }
+}
 router.post('/admin/create', async (req, res) => {
     try {
         const { name, email, mobileNumber, password } = req.body;
@@ -137,6 +152,7 @@ router.post("/admin/reset-password", async (req, res) => {
 
 router.post('/admin/add-student', jwtMiddleware.authenticate, async (req, res) => {
     try {
+        console.log(req.admin);
         const { name, email, password, mobileNumber } = req.body;
         const token = req.headers.authorization;
 
@@ -167,12 +183,17 @@ router.post('/admin/add-student', jwtMiddleware.authenticate, async (req, res) =
     }
 })
 
-router.get('/admin/generate-qrcode', async (req, res) => {
+router.get('/admin/generate-qrcode', jwtMiddleware.authenticate, async (req, res) => {
     try {
+        const { email } = req.admin;
+        const adminRecord = await Admin.findOne({ email });
+        if (!adminRecord) {
+            return res.status(400).json({ message: "Admin not found" });
+        }
         const sessionID = generateRandomString();
-        const qrcodeCode = `sessionId=${sessionID}`;
-        const qrCode = await QRcode.toDataURL(qrcodeCode);
-        return res.status(200).json({ qrCode });
+        adminRecord.sessionToken = sessionID;
+        await adminRecord.save();
+        return res.status(200).json({ sessionID });
     }
     catch (err) {
         return res.status(500).json({ message: "Internal Server Error" });
@@ -221,43 +242,66 @@ router.post('/student/reset-link', async (req, res) => {
     }
 })
 
-router.post('/student/mark-attendance', async (req, res) => {
+router.post('/student/mark-attendance', jwtMiddleware.authenticate, async (req, res) => {
     try {
-        const { studentId } = req.body;
-        const currentDate = new Date();
+        const { email } = req.admin;
+        console.log("Student email", email);
+
+        const { _id } = await Student.findOne({ email });
+        console.log("Student ID", _id);
+        const studentId = _id;
+
+        let currentDate = new Date();
+        currentDate.setMinutes(currentDate.getMinutes() + 330);
+
+        let refDate = new Date();
+        refDate.setMinutes(refDate.getMinutes() + 330);
+
+        let message = "Attendance Marked";
+
         let attendanceRecord = await Attendance.findOne({
             studentId,
-            date: { $gte: new Date().setHours(0, 0, 0, 0) },
+            date: { $gte: new Date(refDate.setHours(0, 0, 0, 0)) },
         });
+
         if (!attendanceRecord) {
             attendanceRecord = new Attendance({
                 studentId,
                 date: new Date(),
-                inTime: currentDate.toTimeString().split(' ')[0],
+                inTime: currentDate.toISOString().slice(11, 19), // Extracting time part
             });
         } else if (attendanceRecord.inTime && attendanceRecord.outTime) {
             return res.status(400).json({ message: "Attendance already marked" });
         } else if (attendanceRecord.inTime && !attendanceRecord.outTime) {
-            attendanceRecord.outTime = currentDate.toTimeString().split(' ')[0];
+            attendanceRecord.outTime = currentDate.toISOString().slice(11, 19); // Extracting time part
             attendanceRecord.status = true;
+            message = "Out Attendance Marked";
         } else {
-            attendanceRecord.inTime = currentDate.toTimeString().split(' ')[0];
+            attendanceRecord.inTime = currentDate.toISOString().slice(11, 19); // Extracting time part
+            message = "In Attendance Marked";
         }
+
         await attendanceRecord.save();
-        return res.status(200).json({ message: "Attendance Marked Successfully" });
+        return res.status(200).json({ message });
     } catch (err) {
+        console.error(err);
         return res.status(500).json({ message: "Internal server error" });
     }
 });
 
 router.get('/admin/set-student-records', async (req, res) => {
     try {
-        const date = new Date();
+        let date = new Date();
+        let refDate = new Date();
+        console.log(date);
+        date.setMinutes(date.getMinutes() + 330);
+        refDate.setMinutes(date.getMinutes() + 330);
+        console.log(date);
         const students = await Student.find({}, '_id');
         for (const student of students) {
             let attendanceRecord = await Attendance.findOne({
                 studentId: student._id,
-                date: { $gte: new Date().setHours(0, 0, 0, 0) },
+                date: { $gte: refDate.setHours(0, 0, 0, 0) },
             });
             if (!attendanceRecord) {
                 attendanceRecord = new Attendance({
@@ -278,6 +322,7 @@ router.get('/admin/set-student-records', async (req, res) => {
         return res.status(200).json({ message: "All Records Created" });
     }
     catch (err) {
+        console.log(err);
         return res.status(500).json({ message: "Internal Server Error" });
     }
 })
@@ -330,13 +375,157 @@ router.post('/admin/attendance/search-by-date', async (req, res) => {
             status: record.status,
             inTime: record.inTime,
             outTime: record.outTime,
-            date : date,
+            date: date,
         }))
         return res.status(200).json(result);
     }
     catch (err) {
         console.log(err);
         res.status(500).json({ message: "Internal Server Error" })
+    }
+})
+
+router.post('/student/validate-qr', async (req, res) => {
+    try {
+        const { qrCode } = req.body;
+        console.log(qrCode);
+        const result = await Admin.findOne({ sessionToken: qrCode });
+        console.log("result from db", result);
+        if (result) {
+            return res.status(200).json({ message: "Valid QR Code" });
+        }
+        return res.status(400).json({ message: "Invalid QR Code" }); s
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+router.get('/student/get-students', jwtMiddleware.authenticate, async (req, res) => {
+    try {
+        const { email } = req.admin;
+        console.log(email);
+        const studentRecord = await Student.findOne({ email });
+        if (!studentRecord)
+            return res.status(400).json({ message: "Student Not Found" });
+        const id = studentRecord._id;
+        const attendanceRecords = await Attendance.find({ studentId: id }).sort({ date: 'desc' });
+        return res.status(200).json(attendanceRecords);
+    }
+    catch (err) {
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+
+})
+router.get('/student/get-details', jwtMiddleware.authenticate, async (req, res) => {
+    try {
+        const { email } = req.admin;
+        const studentRecord = await Student.findOne({ email });
+        if (!studentRecord)
+            return res.status(400).json({ message: "Student not found" });
+        return res.status(200).json(studentRecord);
+    }
+    catch (err) {
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+})
+router.get('/student/get-summary', jwtMiddleware.authenticate, async (req, res) => {
+    try {
+        const { email } = req.admin;
+        const { id } = await Student.findOne({ email });
+        const attendaceRecords = await Attendance.find({ studentId: id });
+        const totalClasses = attendaceRecords.length;
+        const attendedClasses = attendaceRecords.filter(record => record.status).length;
+        return res.status(200).json({ totalClasses, attendedClasses });
+    }
+    catch (err) {
+        return res.status(500).json({ message: "Internal Server Error" })
+    }
+})
+router.put('/admin/set-attendance-status/', async (req, res) => {
+    try {
+        const { id, status } = req.body;
+
+        if (status !== "true" && status !== "false") {
+            return res.status(400).json({ error: 'Invalid status value' });
+        }
+        const updatedAttendance = await Attendance.findByIdAndUpdate(
+            id,
+            { $set: { status } },
+            { new: true }
+        );
+
+        if (!updatedAttendance) {
+            return res.status(404).json({ message: 'Attendance record not found' });
+        }
+        res.status(200).json(updatedAttendance);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+router.put('/admin/update-student', async (req, res) => {
+    try {
+        const { rollNumber, name, email, mobileNumber, password } = req.body;
+        const existingStudent = await Student.findOne({ rollNumber });
+
+        if (!existingStudent) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+
+        existingStudent.name = name;
+        existingStudent.email = email;
+        existingStudent.mobileNumber = mobileNumber;
+        existingStudent.password = password;
+
+        const updatedStudent = await existingStudent.save();
+
+        res.status(200).json({ message: "Updated Successfully" });
+    } catch (error) {
+        console.error('Error updating student:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+router.post('/admin/fetch-student', async (req, res) => {
+    try {
+
+        const { rollNumber } = req.body;
+        console.log(rollNumber);
+        const studentRecord = await Student.findOne({ rollNumber });
+        if (studentRecord) {
+            return res.status(200).json(studentRecord);
+        }
+        return res.status(400).json({ message: "Student with this Roll Number Not Found" })
+    }
+    catch (err) {
+
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+})
+router.delete('/admin/delete-student/:rollNumber', async (req, res) => {
+    try {
+        const { rollNumber } = req.params;
+        const existingStudent = await Student.findOne({ rollNumber });
+
+        if (!existingStudent) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+        await Student.deleteOne({ rollNumber });
+        return res.status(200).json({ message: 'Student deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting student:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+router.get('/admin/fetch-details', jwtMiddleware.authenticate, async (req, res) => {
+    try {
+        const { email } = req.admin;
+        const adminRecord = await Admin.findOne({ email });
+        return res.status(200).json(adminRecord);
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server Error" })
     }
 })
 module.exports = router;

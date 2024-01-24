@@ -5,12 +5,15 @@ import './index.css';
 import QRCode from 'react-qr-code';
 
 const GenerateQRCode = () => {
+
     const [Qrcode, setQRcode] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
-
+    const token = localStorage.getItem('Token');
     const fetchQR = async () => {
-        const data = await generateQR();
-        setQRcode(data.qrCode);
+        const date = new Date();
+        console.log(date);
+        const data = await generateQR(token);
+        setQRcode(data.sessionID);
     }
     const setRecords = async () => {
         try {

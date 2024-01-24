@@ -10,7 +10,7 @@ const Navbar = () => {
             <nav className="navbar">
                 <div className="nav-container">
                     <NavLink exact to="/" className="nav-logo">
-                       <span>Hi Admin</span>
+                        <span>Hi Admin</span>
                     </NavLink>
 
                     <ul className={click ? "nav-menu active" : "nav-menu"}>
@@ -25,7 +25,7 @@ const Navbar = () => {
                                 Dashboard
                             </NavLink>
                         </li>
-                        <li className="nav-item">
+                        {/* <li className="nav-item">
                             <NavLink
                                 exact
                                 to="/addStudent"
@@ -35,7 +35,41 @@ const Navbar = () => {
                             >
                                 Add Student
                             </NavLink>
-                        </li>
+                        </li> */}
+
+                        <div class="dropdown">
+                            <button class="nav-links dropbtn">Manage Students
+                            </button>
+                            <div class="dropdown-content">
+                                <NavLink
+                                    exact
+                                    to="/addStudent"
+                                    activeClassName="active"
+                                    className="nav-links"
+                                    onClick={handleClick}
+                                >
+                                    Add Student
+                                </NavLink>
+                                <NavLink
+                                    exact
+                                    to="/editStudent"
+                                    activeClassName="active"
+                                    className="nav-links"
+                                    onClick={handleClick}
+                                >
+                                    Edit Student
+                                </NavLink>
+                                <NavLink
+                                    exact
+                                    to="/deleteStudent"
+                                    activeClassName="active"
+                                    className="nav-links"
+                                    onClick={handleClick}
+                                >
+                                    Delete Student
+                                </NavLink>
+                            </div>
+                        </div>
                         <li className="nav-item">
                             <NavLink
                                 exact
@@ -50,7 +84,7 @@ const Navbar = () => {
                         <li className="nav-item">
                             <NavLink
                                 exact
-                                to="/contact"
+                                to="/profile"
                                 activeClassName="active"
                                 className="nav-links"
                                 onClick={handleClick}
