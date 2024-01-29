@@ -10,9 +10,9 @@ const port = 5000;
 app.use(express.json())
 app.use(cors())
 dotenv.config()
-//mongodb connection
+
 connectDB();
-//use routes
+
 app.use('/', routes);
 
 

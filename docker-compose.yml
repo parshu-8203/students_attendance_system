@@ -18,3 +18,17 @@ services:
     ports:
       - "3000:3000"
     image: parshu8203/student-attendance-system-frontend:latest
+  qrpanel:
+    build:
+      context: ./qrpanel
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    image: parshu8203/student-attendance-system-qrpanel:latest
+  mobileapp:
+    build:
+      context: ./mobileapp
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    image: parshu8203/student-attendance-system-mobileapp:latest

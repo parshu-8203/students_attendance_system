@@ -11,10 +11,10 @@ const { sendResetLinkEmail, generateResetToken, generateRandomString } = require
 const jwtMiddleware = require('../middleware/auth.js');
 const Attendance = require('../models/Attendance.js');
 function extractDataFromQRCodeImage(filePath) {
-    // Read the image file
+    
     const imageBuffer = fs.readFileSync(filePath);
 
-    // Use jsQR to decode the QR code
+    
     const code = jsQR(imageBuffer, imageBuffer.length);
 
     if (code) {
@@ -77,7 +77,7 @@ router.post('/admin/forgot-password', async (req, res) => {
 
         const resetToken = generateResetToken();
         admin.resetToken = resetToken;
-        //for one hour
+      
         admin.resetTokenExpiration = Date.now() + 60 * 60 * 1000;
         await admin.save();
         const resetLink = `http://localhost:3000/forgot-password/${resetToken}`;
@@ -87,7 +87,7 @@ router.post('/admin/forgot-password', async (req, res) => {
         return res.status(200).json({ message: 'Reset password email sent successfully' });
     }
     catch (err) {
-        console.log(err);
+       
         return res.status(500).json({ message: "Internal Server Error" });
     }
 });
@@ -152,7 +152,7 @@ router.post("/admin/reset-password", async (req, res) => {
 
 router.post('/admin/add-student', jwtMiddleware.authenticate, async (req, res) => {
     try {
-        console.log(req.admin);
+        
         const { name, email, password, mobileNumber } = req.body;
         const token = req.headers.authorization;
 
@@ -214,7 +214,7 @@ router.post('/student/login', async (req, res) => {
         return res.status(400).json({ message: "Invalid Password" });
     }
     catch (err) {
-        console.log(err);
+       
         return res.status(500).json({ message: "Internal Server Error" });
     }
 })
@@ -245,10 +245,10 @@ router.post('/student/reset-link', async (req, res) => {
 router.post('/student/mark-attendance', jwtMiddleware.authenticate, async (req, res) => {
     try {
         const { email } = req.admin;
-        console.log("Student email", email);
+       
 
         const { _id } = await Student.findOne({ email });
-        console.log("Student ID", _id);
+       
         const studentId = _id;
 
         let currentDate = new Date();
@@ -293,10 +293,10 @@ router.get('/admin/set-student-records', async (req, res) => {
     try {
         let date = new Date();
         let refDate = new Date();
-        console.log(date);
+        
         date.setMinutes(date.getMinutes() + 330);
         refDate.setMinutes(date.getMinutes() + 330);
-        console.log(date);
+       
         const students = await Student.find({}, '_id');
         for (const student of students) {
             let attendanceRecord = await Attendance.findOne({
@@ -322,7 +322,7 @@ router.get('/admin/set-student-records', async (req, res) => {
         return res.status(200).json({ message: "All Records Created" });
     }
     catch (err) {
-        console.log(err);
+       
         return res.status(500).json({ message: "Internal Server Error" });
     }
 })
@@ -330,7 +330,7 @@ router.get('/admin/set-student-records', async (req, res) => {
 
 router.post('/admin/attendance/search-by-rollNumber', async (req, res) => {
     try {
-        // const { rollNumber } = req.body;
+
         const { rollNumber } = req.body;
         const student = await Student.findOne({ rollNumber });
 
@@ -362,8 +362,8 @@ router.post('/admin/attendance/search-by-date', async (req, res) => {
         const { date } = req.body;
         const attendanceRecords = await Attendance.find({
             date: {
-                $gte: new Date(date), // Greater than or equal to the start of the specified date
-                $lt: new Date(new Date(date).setDate(new Date(date).getDate() + 1)) // Less than the start of the next day
+                $gte: new Date(date), 
+                $lt: new Date(new Date(date).setDate(new Date(date).getDate() + 1))
             }
         })
             .populate('studentId')
@@ -380,7 +380,7 @@ router.post('/admin/attendance/search-by-date', async (req, res) => {
         return res.status(200).json(result);
     }
     catch (err) {
-        console.log(err);
+       
         res.status(500).json({ message: "Internal Server Error" })
     }
 })
@@ -388,15 +388,12 @@ router.post('/admin/attendance/search-by-date', async (req, res) => {
 router.post('/student/validate-qr', async (req, res) => {
     try {
         const { qrCode } = req.body;
-        console.log(qrCode);
         const result = await Admin.findOne({ sessionToken: qrCode });
-        console.log("result from db", result);
         if (result) {
             return res.status(200).json({ message: "Valid QR Code" });
         }
         return res.status(400).json({ message: "Invalid QR Code" }); s
     } catch (err) {
-        console.log(err);
         return res.status(500).json({ message: 'Internal server error' });
     }
 });
@@ -404,7 +401,6 @@ router.post('/student/validate-qr', async (req, res) => {
 router.get('/student/get-students', jwtMiddleware.authenticate, async (req, res) => {
     try {
         const { email } = req.admin;
-        console.log(email);
         const studentRecord = await Student.findOne({ email });
         if (!studentRecord)
             return res.status(400).json({ message: "Student Not Found" });
@@ -491,7 +487,7 @@ router.post('/admin/fetch-student', async (req, res) => {
     try {
 
         const { rollNumber } = req.body;
-        console.log(rollNumber);
+        
         const studentRecord = await Student.findOne({ rollNumber });
         if (studentRecord) {
             return res.status(200).json(studentRecord);

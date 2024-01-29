@@ -45,9 +45,9 @@ const Navigation = () => {
           tabBarOptions={{
             activeTintColor: '#3498db',
             inactiveTintColor: 'gray',
-            showLabel: false, // Hide labels
+            showLabel: false, 
             style: {
-              backgroundColor: '#fff', // Set your desired background color
+              backgroundColor: '#fff', 
             },
           }}>
           <Tab.Screen

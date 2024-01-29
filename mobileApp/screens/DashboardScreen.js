@@ -1,6 +1,7 @@
 import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { fetchAttendanceRecords } from '../services/apiService';
-import { useState, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { useState, useEffect,useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TextInput as PaperTextInput, Button, Portal, Dialog } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -82,9 +83,12 @@ const DashboardScreen = () => {
     };
 
 
-    useEffect(() => {
-        fetchRecords();
-    }, []);
+ 
+    useFocusEffect(
+        useCallback(() => {
+            fetchRecords();
+        }, [])
+    );
 
     return (
         <View style={styles.container}>

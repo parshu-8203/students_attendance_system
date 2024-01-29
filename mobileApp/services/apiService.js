@@ -1,5 +1,5 @@
 import axios from 'axios';
-const baseURL = "http://192.168.0.108:5000";
+const baseURL = "http://192.168.0.110:5000";
 
 const api = axios.create({
     baseURL,
@@ -29,7 +29,7 @@ export const sendResetLinkEmail = async (data) => {
 export const validateQR = async (qrCode) => {
     try {
         const response = await api.post('/student/validate-qr', { qrCode });
-        console.log(response.data);
+        
         return response.data;
     }
     catch (err) {
@@ -39,13 +39,13 @@ export const validateQR = async (qrCode) => {
 
 export const markAttendance = async (studentId) => {
     try {
-        console.log("mark attendace student id", studentId);
+       
         const response = await api.post('/student/mark-attendance', {}, {
             headers: {
                 Authorization: studentId
             }
         });
-        console.log(response.data);
+      
         return response.data;
     }
     catch (err) {

@@ -67,11 +67,10 @@
     cursor: pointer;
 }
 
-/* Media query for screens smaller than 600px (adjust as needed) */
+
 @media (max-width: 600px) {
     .leftSection {
         display: none;
-        /* Hide the left section on smaller screens */
     }
 
     .rightSection input {
@@ -222,9 +221,6 @@
     border-bottom: 3px solid transparent;
 }
 
-/* .fa-code {
-    margin-left: 1rem;
-  } */
 
 .nav-item {
     line-height: 40px;
@@ -246,10 +242,6 @@
 }
 
 .dropdown .dropbtn {
-    /* font-size: 17px; */
-    /* border: none; */
-    /* color: white;
-    padding: 14px 16px; */
     background-color: inherit;
     font-family: inherit;
     border: 0 !important;
@@ -283,10 +275,7 @@
     display: block;
 }
 
-/* .nav-item:hover:after {
-    width: 100%;
-    background: #DCE2F0;
-} */
+
 
 .nav-item .active {
     color: #DCE2F0;
@@ -461,6 +450,10 @@
     padding: 6px;
 }
 
+.export-section select {
+    margin-left: 10px;
+    padding: 6px;
+}
 .search-button {
     cursor: pointer;
     background-color: #4caf50;

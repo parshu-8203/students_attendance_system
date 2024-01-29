@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchStudentDetails,fetchAttendanceSummary } from '../services/apiService';
-import { Card, Title, Paragraph, Button } from 'react-native-paper'; // You can replace these components with your preferred UI library
+import { Card, Title, Paragraph, Button } from 'react-native-paper';
 const ProfileScreen = ({ navigation, onLogout }) => {
     const [studentDetails, setStudentDetails] = useState({
         name: '',

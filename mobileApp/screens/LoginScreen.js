@@ -19,7 +19,7 @@ const LoginScreen = ({onLoginSuccess}) => {
         try 
         {
             await AsyncStorage.setItem('token', token);
-            console.log("Token set");   
+
         }
         catch(err) 
         {
@@ -36,14 +36,14 @@ const LoginScreen = ({onLoginSuccess}) => {
             const {message, token} = await studentLogin(data);
             await setToken(token);
             onLoginSuccess();
-            console.log(message);
+            
         } catch (error) {
             ToastAndroid.show(error.message, ToastAndroid.SHORT);
         }
     };
 
     const onPressForgotPassword = () => {
-        console.log("Clicked Forgot Password");
+
         toggleModal();
     };
 
@@ -58,7 +58,7 @@ const LoginScreen = ({onLoginSuccess}) => {
         catch (err) {
             ToastAndroid.show(err.message, ToastAndroid.SHORT);
         }
-        // toggleModal();
+    
     };
 
     return (

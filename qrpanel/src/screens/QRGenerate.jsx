@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { generateQR } from '../../services/apiService';
-import { setStudentRecords } from '../../services/apiService';
+import { generateQR } from '../services/apiService';
+import { setStudentRecords } from '../services/apiService';
 import './index.css';
 import QRCode from 'react-qr-code';
 
@@ -11,14 +11,14 @@ const GenerateQRCode = () => {
     const token = localStorage.getItem('Token');
     const fetchQR = async () => {
         const date = new Date();
-        console.log(date);
+        
         const data = await generateQR(token);
         setQRcode(data.sessionID);
     }
     const setRecords = async () => {
         try {
             const data = await setStudentRecords();
-            console.log(data);
+
         } catch (err) {
             console.log(err);
         }

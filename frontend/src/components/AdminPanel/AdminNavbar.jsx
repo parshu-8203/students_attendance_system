@@ -25,18 +25,6 @@ const Navbar = () => {
                                 Dashboard
                             </NavLink>
                         </li>
-                        {/* <li className="nav-item">
-                            <NavLink
-                                exact
-                                to="/addStudent"
-                                activeClassName="active"
-                                className="nav-links"
-                                onClick={handleClick}
-                            >
-                                Add Student
-                            </NavLink>
-                        </li> */}
-
                         <div class="dropdown">
                             <button class="nav-links dropbtn">Manage Students
                             </button>
@@ -73,17 +61,6 @@ const Navbar = () => {
                         <li className="nav-item">
                             <NavLink
                                 exact
-                                to="/generateQR"
-                                activeClassName="active"
-                                className="nav-links"
-                                onClick={handleClick}
-                            >
-                                Generate QR
-                            </NavLink>
-                        </li>
-                        <li className="nav-item">
-                            <NavLink
-                                exact
                                 to="/profile"
                                 activeClassName="active"
                                 className="nav-links"
@@ -94,7 +71,6 @@ const Navbar = () => {
                         </li>
                     </ul>
                     <div className="nav-icon" onClick={handleClick}>
-                        {/* <i className={click ? "fas fa-times" : "fas fa-bars"}></i> */}
 
                         {click ? (
                             <span className="icon">

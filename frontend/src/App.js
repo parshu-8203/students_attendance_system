@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PrivateRoute from './services/privateRoute';
 import AuthService from './services/authService';
@@ -7,7 +7,6 @@ import Admin from './components/AdminPanel';
 import AddStudent from './components/AdminPanel/AddStudent';
 import ForgotPassword from './components/AdminPanel/ForgotPassword';
 import Navbar from './components/AdminPanel/AdminNavbar';
-import GenerateQRCode from './components/QRPanel';
 import EditStudentScreen from './components/AdminPanel/EditStudent';
 import DeleteStudentScreen from './components/AdminPanel/DeleteStudent';
 import ProfileScreen from './components/AdminPanel/ProfileScreen';
@@ -52,10 +51,6 @@ const App = () => {
         <Route
           path="/deleteStudent"
           element={<PrivateRoute element={<DeleteStudentScreen />} />}
-        />
-        <Route
-          path="/generateQR"
-          element={<PrivateRoute element={<GenerateQRCode />} />}
         />
         <Route
           path="/profile"

@@ -11,7 +11,7 @@ const ProfileScreen = ({ onLogout }) => {
     const fetch = async () => {
         const token = localStorage.getItem('Token');
         const response = await fetchAdmin(token);
-        console.log(response);
+
         setUserData(response);
     };
 
@@ -20,7 +20,7 @@ const ProfileScreen = ({ onLogout }) => {
     }, []);
 
     const handleLogout = () => {
-        onLogout(); // Call the onLogout callback from App
+        onLogout(); 
     };
 
     return (

@@ -2,7 +2,9 @@ import studentIcon from '../../assets/student.png';
 import { useState } from 'react';
 import { addStudent } from '../../services/apiService';
 import { toast } from 'react-hot-toast';
+import Loader from '../../services/loader';
 const AddStudent = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -21,9 +23,11 @@ const AddStudent = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            setIsLoading(true);
             const token = localStorage.getItem('Token');
             formData.token = token;
             const { message } = await addStudent(formData);
+            setIsLoading(false);
             toast.success(message, {
                 duration: 2000,
             });
@@ -35,7 +39,7 @@ const AddStudent = () => {
             });
         }
         catch (error) {
-            console.log("error", error);
+            setIsLoading(false);
             toast.error(error.message, {
                 duration: 3000,
             });
@@ -43,59 +47,64 @@ const AddStudent = () => {
     };
 
     return (
-        <div className="student-container">
-            <img src={studentIcon} />
-            <h2 style={{ margin: 0 }}>Add Student</h2>
-            <form className="form" onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="name">Name</label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="email">Email</label>
-                    <input
+        <>
+            {
+                isLoading && (<Loader />)
+            }
+            <div className="student-container">
+                <img src={studentIcon} />
+                <h2 style={{ margin: 0 }}>Add Student</h2>
+                <form className="form" onSubmit={handleSubmit}>
+                    <div className="form-group">
+                        <label htmlFor="name">Name</label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="email">Email</label>
+                        <input
 
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="contactNo">Contact No</label>
-                    <input
-                        type="tel"
-                        id="contactNo"
-                        name="mobileNumber"
-                        value={formData.mobileNumber}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="password">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                    />
+                            type="email"
+                            id="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="contactNo">Contact No</label>
+                        <input
+                            type="tel"
+                            id="contactNo"
+                            name="mobileNumber"
+                            value={formData.mobileNumber}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="password">Password</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            required
+                        />
 
-                </div>
-                <button type="submit">Submit</button>
-            </form>
-        </div>
+                    </div>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </>
     )
 }
 export default AddStudent;

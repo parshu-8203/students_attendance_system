@@ -59,52 +59,25 @@ export const resetPassword = async (token, newPassword) => {
 }
 
 export const addStudent = async (data) => {
-    console.log(data);
+
     try {
         const response = await api.post('/admin/add-student', data, {
             headers: {
                 Authorization: data.token
             }
         });
-        console.log(response.data);
         return response.data;
     }
     catch (err) {
-        console.log(err.response.data);
-        throw err.response ? err.response.data : err.message;
-    }
-}
-
-export const generateQR = async (token) => {
-    try {
-        // const response = await api.get('/admin/generate-qrcode');
-        const response = await api.get('/admin/generate-qrcode', {
-            headers: {
-                Authorization: token
-            }
-        });
-        return response.data;
-    }
-    catch (err) {
-        throw err.response ? err.response.data : err.message;
-    }
-}
-
-export const setStudentRecords = async () => {
-    try {
-        const response = await api.get('/admin/set-student-records');
-        return response.data;
-
-    } catch (err) {
         throw err.response ? err.response.data : err.message;
     }
 }
 
 export const getStudentByRollNumber = async (rollNumber) => {
     try {
-        console.log(rollNumber);
+
         const response = await api.post('/admin/attendance/search-by-rollNumber', { rollNumber });
-        console.log(response.data);
+       
         return response.data;
     }
     catch (err) {
@@ -113,9 +86,9 @@ export const getStudentByRollNumber = async (rollNumber) => {
 }
 export const getStudentByDate = async (date) => {
     try {
-        console.log(date);
+       
         const response = await api.post('/admin/attendance/search-by-date', { date });
-        console.log(response.data);
+        
         return response.data;
 
     }
@@ -137,7 +110,6 @@ export const setAttendanceStatus = async (id, status) => {
 
 export const fetchRollNumber = async (rollNumber) => {
     try {
-        console.log("Fetch Rol", rollNumber)
         const response = await api.post('/admin/fetch-student', { rollNumber });
         return response.data;
     }

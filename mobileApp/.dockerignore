@@ -1,0 +1,30 @@
+# .dockerignore for mobile app
+
+# Ignore node_modules in the project root
+node_modules
+
+# Ignore build artifacts
+/build
+
+# Ignore Expo-specific directories
+.expo
+.cache
+.watchman
+web-build
+
+# Ignore files generated during development or build
+*.log
+.DS_Store
+.env
+*.env.local
+
+# Ignore npm/yarn lock files
+package-lock.json
+yarn.lock
+
+# Ignore files and directories created during testing
+__tests__
+coverage
+
+# Ignore local development configurations
+local.config.js
