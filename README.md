@@ -86,7 +86,7 @@ npm start
 ```
 
 ## Tech Stack
-- Frontend: React
+- Frontend: React(Web), React Native(Mobile Application)
 - Backend: Node.js (Express)
 - Database: MongoDB
 
