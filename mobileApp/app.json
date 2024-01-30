@@ -14,11 +14,12 @@
         }
       ]
     ],
-    "name": "mobileApp",
+    "name": "attendanceApp",
+
     "slug": "mobileApp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/roll-call.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -38,7 +39,7 @@
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/roll-call.png"
     }
   }
 }
